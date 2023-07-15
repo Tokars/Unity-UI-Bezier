@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2017 Kiwon(geniikw@gmail.com)
+Copyright (c) 2017 Kiwon(geniikw@gmail.com), 2023 Tokar.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
