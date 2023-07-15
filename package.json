@@ -1,0 +1,25 @@
+{
+  "name": "dev.tokar.ui.bezier",
+  "version": "0.0.1",
+  "displayName": "UI Bezier",
+  "description": "Unity ui Bezier curves.",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": ""
+  },
+  "samples": [],
+  "author": {
+    "name": "",
+    "email": "",
+    "url": ""
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "dependencies": {
+    "tokar.dev.attributes": "0.1.17"
+  },
+
+  "hideInEditor": false
+}
