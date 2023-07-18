@@ -50,7 +50,7 @@ namespace UI.Bezier
         public bool roundEdge = false;
         public int roundEdgePolygonCount = 5;
 
-        [Range(0, 1)] [Header("0일땐 안그림 1일때 전부그림")] [SerializeField]
+        [UnityEngine.Range(0, 1)] [Header("0일땐 안그림 1일때 전부그림")] [SerializeField]
         float m_lengthRatio = 1f;
 
         public float lengthRatio
@@ -63,7 +63,12 @@ namespace UI.Bezier
             }
         }
 
-        [SerializeField] [Range(0, 1)] float m_startRatio = 0f;
+        public void LocalUpdateGeometry()
+        {
+            UpdateGeometry();
+        }
+
+        [SerializeField] [UnityEngine.Range(0, 1)] float m_startRatio = 0f;
 
         private float StartRatio
         {
@@ -94,6 +99,7 @@ namespace UI.Bezier
         {
             vh.Clear();
             UIVertex[] prvVert = null;
+            _curvePoints.Clear();
             for (int n = 0; n < m_points.Count - 1; n++)
             {
                 if (GetLength(n + 1) / LineLength <= m_startRatio)
@@ -108,6 +114,7 @@ namespace UI.Bezier
             }
         }
 
+        [SerializeField] private List<Vector2> curvePoints = new List<Vector2>();
         private UIVertex[] DrawLine(int index, VertexHelper vh, UIVertex[] prvLineVert = null)
         {
             UIVertex[] prvVert = null;
@@ -119,6 +126,7 @@ namespace UI.Bezier
             float currentRatio = ratio0;
             var divideCount = m_points[index].nextCurveDivideCount;
 
+            // print($"- - - - -- divideCount: {divideCount}");
             for (int n = 0; n < divideCount; n++)
             {
                 Vector3 p0 = EvaluatePoint(index, 1f / divideCount * n);
@@ -150,6 +158,11 @@ namespace UI.Bezier
 
                 Vector3 p0 = EvaluatePoint(index, t0);
                 Vector3 p1 = EvaluatePoint(index, t1);
+                // print($"- - - - - - - - p0: {p0} AND p1 {p1}");
+                if (_curvePoints.Contains(p0) == false)
+                    _curvePoints.Add(p0);
+                if (_curvePoints.Contains(p1) == false)
+                    _curvePoints.Add(p1);
 
                 var w0 = eachWidth ? EvaluateWidth(index, t0) : m_width;
                 var w1 = eachWidth ? EvaluateWidth(index, t1) : m_width;
@@ -208,6 +221,9 @@ namespace UI.Bezier
 
             return prvVert;
         }
+
+        private List<Vector2> _curvePoints = new List<Vector2>();
+        public List<Vector2> CurvePoints => _curvePoints;
 
         void FillJoint(VertexHelper vh, UIVertex vp0, UIVertex vp1, UIVertex[] prvLineVert, Color color,
             float width = -1)

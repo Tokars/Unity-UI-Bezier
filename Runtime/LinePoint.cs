@@ -31,8 +31,8 @@ namespace UI.Bezier
 
         public void ResetOffsets()
         {
-            prvCurveOffset = point;
-            nextCurveOffset = point;
+            nextCurveOffset = prvCurveOffset = Vector2.zero;
+            isPrvCurve = isNextCurve = true;
         }
         /*public Vector2 NextCurveOffset
         {
