@@ -6,15 +6,15 @@ namespace UI.Bezier
 {
     public class TransformPointSetter : MonoBehaviour
     {
-        [SerializeField] private Camera cam;
         [SerializeField] private RectTransform rect;
         [SerializeField] private Transform[] trPoints;
         [SerializeField] private UIMeshLine line;
+        [field:SerializeField] public Camera Cam { set; get; }
 
         [EditorButton]
-        private void Start()
+        public void Draw()
         {
-            var camPosInit = cam.transform.position;
+            var camPosInit = Cam.transform.position;
             ZoomCamera(camPosInit);
             
             int i = 0;
@@ -35,18 +35,18 @@ namespace UI.Bezier
                     line.AddPoint(new LinePoint(ToScreenPos(trPoints[i].transform.position)));
             
             line.LocalUpdateGeometry();
-            cam.transform.position = camPosInit;
+            Cam.transform.position = camPosInit;
         }
         void ZoomCamera(Vector3 camPosInit)
         {
             var camPos = camPosInit; 
             camPos.z = -10;
-            cam.transform.position = camPos;
+            Cam.transform.position = camPos;
         }
         private Vector2 ToScreenPos(Vector3 pos)
         {
             Vector2 res;
-            cam.WorldRectToScreenSpace(pos, rect, out res);
+            Cam.WorldRectToScreenSpace(pos, rect, out res);
             return res;
         }
 
