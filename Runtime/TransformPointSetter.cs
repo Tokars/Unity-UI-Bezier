@@ -4,19 +4,49 @@ using UnityEngine;
 
 namespace UI.Bezier
 {
-    public class TransformPointSetter : MonoBehaviour
+    public abstract class BaseTransformPointSetter<TLine> : MonoBehaviour where TLine : CustomLine
     {
-        [SerializeField] private RectTransform rect;
-        [SerializeField] private Transform[] trPoints;
-        [SerializeField] private UIMeshLine line;
-        [field:SerializeField] public Camera Cam { set; get; }
+        [SerializeField] protected TLine line;
+
+        [SerializeField] protected RectTransform rect;
+
+        // todo: think about package own camera.
+        [field: SerializeField] public Camera Cam { set; get; }
+
+        [SerializeField] protected TransformPointEditor[] trPoints;
 
         [EditorButton]
-        public void Draw()
+        protected virtual void GrabEditorPoints()
+        {
+            trPoints = GetComponentsInChildren<TransformPointEditor>();
+        }
+        protected void ZoomCamera(Vector3 camPosInit)
+        {
+            var camPos = camPosInit;
+            camPos.z = -10;
+            Cam.transform.position = camPos;
+        }
+
+        protected Vector2 ToScreenPos(Vector3 pos)
+        {
+            Vector2 res;
+            Cam.WorldRectToScreenSpace(pos, rect, out res);
+            return res;
+        }
+
+        [EditorButton]
+        public abstract void Draw();
+
+    }
+
+
+    public class TransformPointSetter : BaseTransformPointSetter<UIMeshLine>
+    {
+        public override void Draw()
         {
             var camPosInit = Cam.transform.position;
             ZoomCamera(camPosInit);
-            
+
             int i = 0;
             if (trPoints.Length == 0) return;
 
@@ -33,22 +63,17 @@ namespace UI.Bezier
             if (trPoints.Length > i)
                 for (; i < trPoints.Length; i++)
                     line.AddPoint(new LinePoint(ToScreenPos(trPoints[i].transform.position)));
-            
+
             line.LocalUpdateGeometry();
             Cam.transform.position = camPosInit;
         }
-        void ZoomCamera(Vector3 camPosInit)
-        {
-            var camPos = camPosInit; 
-            camPos.z = -10;
-            Cam.transform.position = camPos;
-        }
-        private Vector2 ToScreenPos(Vector3 pos)
-        {
-            Vector2 res;
-            Cam.WorldRectToScreenSpace(pos, rect, out res);
-            return res;
-        }
 
+        
+        [EditorButton]
+        private void ResetTangents()
+        {
+            line.ResetTangents();
+        }
+       
     }
 }

@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace UI.Bezier
 {
     [RequireComponent(typeof(CanvasRenderer))]
-    public class UIMeshLine : MaskableGraphic, IMeshModifier, ICanvasRaycastFilter
+    public class UIMeshLine : CustomLine, IMeshModifier, ICanvasRaycastFilter
     {
         [SerializeField] List<LinePoint> m_points = new List<LinePoint>();
         [SerializeField] float m_width = 10f;
@@ -50,15 +50,14 @@ namespace UI.Bezier
         public bool roundEdge = false;
         public int roundEdgePolygonCount = 5;
 
-        [UnityEngine.Range(0, 1)] [Header("0일땐 안그림 1일때 전부그림")] [SerializeField]
-        float m_lengthRatio = 1f;
+        [SerializeField, Range(0, 1)] float lengthRatio = 1f;
 
-        public float lengthRatio
+        public float LengthRatio
         {
-            get { return m_lengthRatio; }
+            get => lengthRatio;
             set
             {
-                m_lengthRatio = value;
+                lengthRatio = value;
                 UpdateGeometry();
             }
         }
@@ -68,14 +67,14 @@ namespace UI.Bezier
             UpdateGeometry();
         }
 
-        [SerializeField] [UnityEngine.Range(0, 1)] float m_startRatio = 0f;
+        [SerializeField] [Range(0, 1)] float startRatio = 0f;
 
         private float StartRatio
         {
-            get => m_startRatio;
+            get => startRatio;
             set
             {
-                m_startRatio = value;
+                startRatio = value;
                 UpdateGeometry();
             }
         }
@@ -102,10 +101,10 @@ namespace UI.Bezier
             _curvePoints.Clear();
             for (int n = 0; n < m_points.Count - 1; n++)
             {
-                if (GetLength(n + 1) / LineLength <= m_startRatio)
+                if (GetLength(n + 1) / LineLength <= startRatio)
                     continue;
 
-                if (GetLength(n) / LineLength > m_lengthRatio)
+                if (GetLength(n) / LineLength > lengthRatio)
                 {
                     break;
                 }
@@ -114,7 +113,6 @@ namespace UI.Bezier
             }
         }
 
-        [SerializeField] private List<Vector2> curvePoints = new List<Vector2>();
         private UIVertex[] DrawLine(int index, VertexHelper vh, UIVertex[] prvLineVert = null)
         {
             UIVertex[] prvVert = null;
@@ -180,10 +178,10 @@ namespace UI.Bezier
                 ///check final
                 //float length = GetLength(index + 1);
                 bool isFinal = false;
-                if (currentRatio > m_lengthRatio)
+                if (currentRatio > lengthRatio)
                 {
                     currentRatio -= deltaRatio;
-                    float targetlength = ll * m_lengthRatio;
+                    float targetlength = ll * lengthRatio;
                     Vector3 lineVector = p1 - p0;
                     p1 = p0 + lineVector.normalized * (targetlength - ll * currentRatio);
                     isFinal = true;
@@ -223,7 +221,6 @@ namespace UI.Bezier
         }
 
         private List<Vector2> _curvePoints = new List<Vector2>();
-        public List<Vector2> CurvePoints => _curvePoints;
 
         void FillJoint(VertexHelper vh, UIVertex vp0, UIVertex vp1, UIVertex[] prvLineVert, Color color,
             float width = -1)
@@ -571,6 +568,20 @@ namespace UI.Bezier
 
             return false;
         }
+
+        public void ResetTangents()
+        {
+            for (int i = 0; i < m_points.Count; i++)
+            {
+                var data = m_points[i];
+                data.isPrvCurve = false;
+                data.prvCurveOffset = Vector2.up;
+                data.isNextCurve = false;
+                data.nextCurveOffset = Vector2.up;
+                m_points[i] = data;
+            }
+        }
+        
         public void SetPoints(LinePoint[] points)
         {
             m_points.Clear();
