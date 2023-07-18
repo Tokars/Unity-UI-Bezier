@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "tokar.dev.attributes": "0.1.17",
-    "tokar.dev.ot_custom_extensions": "0.1.12"
+    "tokar.dev.ot_custom_extensions": "0.1.13"
   },
 
   "hideInEditor": false
