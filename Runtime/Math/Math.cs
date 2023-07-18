@@ -1,5 +1,4 @@
-﻿using CustomExtension;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UI.Bezier.Math
 {
