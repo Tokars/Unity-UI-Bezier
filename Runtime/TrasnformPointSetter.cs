@@ -14,6 +14,9 @@ namespace UI.Bezier
         [EditorButton]
         private void Start()
         {
+            var camPosInit = cam.transform.position;
+            ZoomCamera(camPosInit);
+            
             int i = 0;
             if (trPoints.Length == 0) return;
 
@@ -32,8 +35,14 @@ namespace UI.Bezier
                     line.AddPoint(new LinePoint(ToScreenPos(trPoints[i].transform.position)));
             
             line.LocalUpdateGeometry();
+            cam.transform.position = camPosInit;
         }
-
+        void ZoomCamera(Vector3 camPosInit)
+        {
+            var camPos = camPosInit; 
+            camPos.z = -10;
+            cam.transform.position = camPos;
+        }
         private Vector2 ToScreenPos(Vector3 pos)
         {
             Vector2 res;
