@@ -50,7 +50,7 @@ namespace UI.Bezier
         public bool roundEdge = false;
         public int roundEdgePolygonCount = 5;
 
-        [SerializeField, Range(0, 1)] float lengthRatio = 1f;
+        [SerializeField, Range(0, 1)] public float lengthRatio = 1f;
 
         public float LengthRatio
         {
